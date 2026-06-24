@@ -6,7 +6,9 @@
    - Spaced-repetition error log
    - Estimated score + streaks + progress
    ============================================================ */
-const { DOMAINS, OFFICIAL_RESOURCES, CURRICULUM, DESMOS_TIPS, QUESTIONS } = window.SAT;
+// DOMAINS, OFFICIAL_RESOURCES, CURRICULUM, DESMOS_TIPS, QUESTIONS are declared as
+// top-level consts in data.js (loaded first) and are in scope here. Do NOT redeclare
+// them — two `const`s of the same name in the shared global script scope is a SyntaxError.
 
 const STORE_KEY = "satmath_state_v1";
 const DAY = 864e5;
