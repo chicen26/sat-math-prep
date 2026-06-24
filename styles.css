@@ -109,15 +109,43 @@ ul.tips li{margin:.35em 0}
 
 /* nav */
 #nav{
-  position:fixed;bottom:0;left:0;right:0;display:flex;justify-content:space-around;
-  background:rgba(11,16,32,.92);backdrop-filter:blur(12px);border-top:1px solid var(--line);
-  padding:8px 4px env(safe-area-inset-bottom);
+  position:fixed;bottom:0;left:0;right:0;display:flex;justify-content:center;gap:6px;
+  background:rgba(11,16,32,.94);backdrop-filter:blur(12px);border-top:1px solid var(--line);
+  padding:8px 6px calc(8px + env(safe-area-inset-bottom));
 }
 #nav button{
-  flex:1;background:none;border:none;color:var(--muted);font-size:.72rem;font-weight:600;
-  padding:8px 2px;cursor:pointer;border-radius:10px;
+  flex:1;max-width:150px;display:flex;flex-direction:column;align-items:center;gap:3px;
+  background:none;border:none;color:var(--muted);font-weight:600;
+  padding:8px 2px;cursor:pointer;border-radius:12px;transition:background .12s,color .12s;
 }
-#nav button.active{color:var(--accent)}
+#nav button .ni{font-size:1.4rem;line-height:1}
+#nav button .nl{font-size:.76rem}
+#nav button.active{color:var(--accent);background:rgba(110,168,254,.14)}
+#nav button:hover{color:var(--ink)}
+
+/* bigger, comfier nav on laptop/desktop */
+@media(min-width:700px){
+  body{padding-bottom:104px}
+  #nav{gap:10px;padding:12px 8px}
+  #nav button{max-width:170px;padding:12px 10px;border-radius:14px}
+  #nav button .ni{font-size:1.85rem}
+  #nav button .nl{font-size:1rem;letter-spacing:.2px}
+}
+
+/* simpler, thumb-friendly mobile UI */
+@media(max-width:520px){
+  body{font-size:17px;padding-bottom:96px}
+  #topbar{padding:12px 14px}
+  #app{padding:14px 12px}
+  .card{padding:15px;border-radius:14px}
+  .stem{font-size:1.2rem;line-height:1.55}
+  .choice{padding:17px 15px;font-size:1.06rem}
+  .grid-in input{padding:16px;font-size:1.15rem}
+  .big-btn{padding:18px;font-size:1.1rem;border-radius:16px}
+  .dom-grid{grid-template-columns:1fr}
+  #nav button .ni{font-size:1.55rem}
+  #nav button .nl{font-size:.82rem}
+}
 
 /* mock */
 .mock-clock{margin-left:8px;font-weight:800;font-variant-numeric:tabular-nums;color:var(--warn);

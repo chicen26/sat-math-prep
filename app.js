@@ -221,9 +221,9 @@ function render() {
 
 function renderNav() {
   const nav = document.getElementById("nav");
-  const tabs = [["today", "📅 Today"], ["practice", "✏️ Practice"], ["desmos", "📈 Desmos"], ["progress", "📊 Progress"], ["plan", "🗺️ Plan"]];
-  nav.innerHTML = tabs.map(([id, label]) =>
-    `<button class="${activeTab === id ? "active" : ""}" onclick="setTab('${id}')">${label}</button>`).join("");
+  const tabs = [["today", "📅", "Today"], ["practice", "✏️", "Practice"], ["desmos", "📈", "Desmos"], ["progress", "📊", "Progress"], ["plan", "🗺️", "Plan"]];
+  nav.innerHTML = tabs.map(([id, icon, label]) =>
+    `<button class="${activeTab === id ? "active" : ""}" onclick="setTab('${id}')"><span class="ni">${icon}</span><span class="nl">${label}</span></button>`).join("");
 }
 
 function card(inner, cls = "") { return `<div class="card ${cls}">${inner}</div>`; }
