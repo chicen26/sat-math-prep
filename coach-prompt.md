@@ -6,15 +6,26 @@ Task: append fresh, high-quality, SAT-style math questions to the `QUESTIONS` ar
 ## Each run
 1. Add **8–12 new questions**, spread across all four domains:
    `ALG` (Algebra), `ADV` (Advanced Math), `PSD` (Problem-Solving & Data), `GEO` (Geometry & Trig).
-2. Bias toward **difficulty 3–5** and toward the domains/skills the student is weakest in
-   (if a progress export is available; otherwise rotate evenly).
+2. **Difficulty: bias hard, and ramp harder as the bank matures.** This bank targets 790–800
+   and already has plenty of easy material, so deepen the *hard tail*. Aim per run for roughly:
+   - **~55% difficulty 5** (hardest tier: discriminant/double-root edge cases, nonlinear systems,
+     multi-step word problems, radians & circle-equation completing-the-square, multi-concept items).
+   - **~35% difficulty 4**.
+   - **~10% difficulty 3** — only when introducing a *new* skill that needs an on-ramp.
+   - Generate **no difficulty 1–2** unless a brand-new skill genuinely needs one.
+   Before generating, count `"diff":4` and `"diff":5` in data.js. The larger and better-spread the
+   diff-5 pool already is, the harder you go: introduce **two-concept** questions (e.g. a quadratic
+   set inside a geometry or rate context) so a high-performing student never tops out.
+   When a progress export is available, also concentrate on the student's **weakest skills**, and lean
+   even harder the higher their accuracy at diff 4–5 is — more correct answers ⇒ more diff-5 generation.
 3. Use **unique ids** continuing the existing scheme (e.g. `A11`, `B11`, … or `GEN-<n>`).
 4. Mix `type`: some `mental`, some `work`, some `desmos`. Mix `format`: ~75% `mc`, ~25% `grid`.
 
 ## Quality bar (this is for an 800 target)
 - **Verify every answer numerically** before writing it. No wrong keys.
 - MC: 4 plausible choices; distractors should reflect common mistakes (sign errors, off-by-one,
-  forgetting to halve, etc.). `answer` is the index of the correct choice.
+  forgetting to halve, etc.). `answer` is the index of the correct choice. **All four choices must
+  be distinct values** — never include two that evaluate to the same number (e.g. `3` and `√9`).
 - Grid: `answer` is a string; decimals/fractions both acceptable by the app's checker.
 - Every question needs: `solution` (full steps), `shortcut` (the fast/mental move),
   and `desmos` (the calculator method, or `""` if truly N/A).
