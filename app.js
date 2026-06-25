@@ -595,6 +595,31 @@ currentQuestion = function () {
 /* ---------- SHARE / INSTALL ---------- */
 const APP_URL = location.origin + location.pathname.replace(/index\.html$/, "");
 const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+const isStandalone = window.matchMedia("(display-mode: standalone)").matches
+  || window.navigator.standalone === true;
+const INSTALL_DISMISS_KEY = "satmath_install_dismissed";
+
+// Auto-prompt iPhone visitors (in Safari, not yet installed) to Add to Home Screen.
+function maybeShowInstallBanner() {
+  if (isStandalone) return;                                    // already installed → skip
+  if (localStorage.getItem(INSTALL_DISMISS_KEY)) return;       // user dismissed before
+  if (document.getElementById("install-banner")) return;
+  const inSafari = /safari/i.test(navigator.userAgent) && !/crios|fxios|edgios/i.test(navigator.userAgent);
+  const steps = isIOS
+    ? `Tap <span class="ib-share">⬆</span> <b>Share</b> below${inSafari ? "" : " in Safari"}, then <b>Add to Home Screen</b>.`
+    : `Open your browser menu → <b>Install app</b> / <b>Add to Home Screen</b>.`;
+  const el = document.createElement("div");
+  el.id = "install-banner";
+  el.innerHTML = `
+    <div class="ib-icon">📲</div>
+    <div class="ib-body"><b>Install SAT Math</b> on your home screen — opens full-screen &amp; works offline.<br>${steps}</div>
+    <button class="ib-x" aria-label="Dismiss" onclick="dismissInstall()">✕</button>`;
+  document.body.appendChild(el);
+}
+function dismissInstall() {
+  try { localStorage.setItem(INSTALL_DISMISS_KEY, "1"); } catch (e) {}
+  const b = document.getElementById("install-banner"); if (b) b.remove();
+}
 
 function shareApp() {
   if (navigator.share) {
@@ -638,5 +663,6 @@ function copyLink() {
 // expose for inline handlers
 Object.assign(window, { setTab, startSession, startFocused, pickMC, submitAnswer, STORE_KEY,
   startMock, mockPick, mockNext, mockGoto, mockGotoSafe: mockGoto, abandonMock, renderMockView,
-  shareApp, showShareSheet, closeShare, copyLink });
+  shareApp, showShareSheet, closeShare, copyLink, dismissInstall });
 render();
+maybeShowInstallBanner();
