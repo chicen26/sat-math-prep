@@ -592,7 +592,51 @@ currentQuestion = function () {
   return slot._q;
 };
 
+/* ---------- SHARE / INSTALL ---------- */
+const APP_URL = location.origin + location.pathname.replace(/index\.html$/, "");
+const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+
+function shareApp() {
+  if (navigator.share) {
+    navigator.share({
+      title: "SAT Math — Daily Adaptive Prep",
+      text: "Adaptive SAT Math practice. Open it, then Add to Home Screen to use it like an app.",
+      url: APP_URL,
+    }).catch(() => {});
+  } else {
+    showShareSheet();
+  }
+}
+
+function showShareSheet() {
+  const installSteps = isIOS
+    ? `<b>Install on iPhone:</b> tap <b>Share ⬆️</b> in Safari, then <b>Add to Home Screen</b>.`
+    : `<b>Install:</b> in your browser menu choose <b>Install app</b> / <b>Add to Home Screen</b>.`;
+  const el = document.createElement("div");
+  el.id = "share-overlay";
+  el.innerHTML = `
+    <div class="share-modal">
+      <button class="share-x" onclick="closeShare()">✕</button>
+      <h2 style="margin-top:0">Share this app</h2>
+      <p class="muted small">Scan the code or copy the link. Works on any phone or laptop.</p>
+      <img src="qr.png" alt="QR code to open the app" class="share-qr" />
+      <div class="share-url">${APP_URL}</div>
+      <button class="primary" onclick="copyLink()">📋 Copy link</button>
+      <p class="muted small" style="margin-bottom:0">${installSteps}</p>
+    </div>`;
+  el.addEventListener("click", (e) => { if (e.target === el) closeShare(); });
+  document.body.appendChild(el);
+}
+function closeShare() { const o = document.getElementById("share-overlay"); if (o) o.remove(); }
+function copyLink() {
+  navigator.clipboard?.writeText(APP_URL).then(() => {
+    const b = document.querySelector("#share-overlay .primary");
+    if (b) { b.textContent = "✓ Copied!"; setTimeout(() => { if (b) b.textContent = "📋 Copy link"; }, 1500); }
+  }).catch(() => {});
+}
+
 // expose for inline handlers
 Object.assign(window, { setTab, startSession, startFocused, pickMC, submitAnswer, STORE_KEY,
-  startMock, mockPick, mockNext, mockGoto, mockGotoSafe: mockGoto, abandonMock, renderMockView });
+  startMock, mockPick, mockNext, mockGoto, mockGotoSafe: mockGoto, abandonMock, renderMockView,
+  shareApp, showShareSheet, closeShare, copyLink });
 render();

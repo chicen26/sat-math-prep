@@ -9,7 +9,7 @@
   <!-- Installable app (Android / Chrome / iOS home screen) -->
   <link rel="manifest" href="manifest.json" />
   <link rel="icon" href="icon-192.png" />
-  <link rel="apple-touch-icon" href="icon-192.png" />
+  <link rel="apple-touch-icon" href="apple-touch-icon.png" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -22,7 +22,10 @@
 <body>
   <header id="topbar">
     <div class="brand">∑ SAT Math <span>Daily</span></div>
-    <div class="goal">Target: <b>790–800</b> · Sept</div>
+    <div style="display:flex;align-items:center;gap:10px">
+      <div class="goal">Target: <b>790–800</b> · Sept</div>
+      <button class="share-btn" onclick="shareApp()">↗ Share</button>
+    </div>
   </header>
   <main id="app"></main>
   <nav id="nav"></nav>

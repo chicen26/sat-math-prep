@@ -2,10 +2,11 @@
    Strategy: network-first for same-origin GETs (so code fixes and the daily
    coach's fresh questions always load when online), with a cache fallback so
    the app still opens offline. Bump VERSION to invalidate old caches. */
-const VERSION = "satmath-v1";
+const VERSION = "satmath-v2";
 const ASSETS = [
   "./", "./index.html", "./styles.css", "./app.js", "./data.js",
   "./manifest.json", "./icon-192.png", "./icon-512.png",
+  "./apple-touch-icon.png", "./qr.png",
 ];
 
 self.addEventListener("install", (e) => {

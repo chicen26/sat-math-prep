@@ -20,9 +20,38 @@ h2{font-size:1.25rem;margin:.2em 0 .4em}
 
 /* header */
 #topbar{
-  position:sticky;top:0;z-index:5;display:flex;justify-content:space-between;align-items:center;
-  padding:14px 18px;background:rgba(11,16,32,.85);backdrop-filter:blur(10px);
+  position:sticky;top:0;z-index:5;display:flex;justify-content:space-between;align-items:center;gap:8px;
+  padding:14px 18px;padding-top:calc(14px + env(safe-area-inset-top));
+  padding-left:calc(18px + env(safe-area-inset-left));
+  padding-right:calc(18px + env(safe-area-inset-right));
+  background:rgba(11,16,32,.85);backdrop-filter:blur(10px);
   border-bottom:1px solid var(--line);
+}
+.share-btn{
+  flex:none;background:var(--card2);color:var(--ink);border:1px solid var(--line);
+  border-radius:10px;padding:7px 11px;font-size:.8rem;font-weight:600;cursor:pointer;
+}
+.share-btn:active{transform:scale(.96)}
+
+/* share / install overlay */
+#share-overlay{
+  position:fixed;inset:0;z-index:50;display:flex;align-items:center;justify-content:center;
+  background:rgba(4,7,18,.72);backdrop-filter:blur(4px);padding:20px;
+}
+.share-modal{
+  position:relative;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  padding:22px;max-width:340px;width:100%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.5);
+}
+.share-x{
+  position:absolute;top:10px;right:10px;background:none;border:none;color:var(--muted);
+  font-size:1.1rem;cursor:pointer;padding:6px;line-height:1;
+}
+.share-qr{
+  width:200px;height:200px;border-radius:12px;background:#fff;padding:10px;margin:6px auto 12px;display:block;
+}
+.share-url{
+  font-size:.82rem;color:var(--accent);word-break:break-all;background:var(--bg2);
+  border:1px solid var(--line);border-radius:10px;padding:9px;margin-bottom:12px;
 }
 .brand{font-weight:800;letter-spacing:.3px}
 .brand span{color:var(--accent);font-weight:600}
