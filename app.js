@@ -101,6 +101,59 @@ function estScore() {
   return Math.round(sc / 10) * 10;
 }
 
+/* ---------- progress sync (feeds the daily cloud coach) ----------
+   We POST a small, non-PII performance summary to a private ntfy.sh topic.
+   The coach reads it at the start of each run and tailors difficulty/skills:
+   more correct answers at diff 4-5 ⇒ it generates harder questions, and it
+   targets the weakest skills. Topic name acts as an unguessable key. */
+const PROGRESS_TOPIC = "satmath-progress-99bef57af356c412bc146ee642a84e83";
+const LAST_SYNC_KEY = "satmath_last_sync";
+let _lastSyncAt = 0;
+
+function buildProgressSummary() {
+  const h = S.history || [];
+  const accOf = (arr) => (arr.length ? +(arr.filter(x => x.correct).length / arr.length).toFixed(3) : null);
+  const byDiff = {};
+  for (let d = 1; d <= 5; d++) { const a = h.filter(x => x.diff === d); byDiff[d] = { n: a.length, acc: accOf(a) }; }
+  const byDomain = {};
+  for (const dom in DOMAINS) { const a = h.filter(x => x.domain === dom); byDomain[dom] = { n: a.length, acc: accOf(a), rating: Math.round(domainRating(dom)) }; }
+  const weakestSkills = Object.entries(S.skills)
+    .filter(([, v]) => v.n >= 3)
+    .sort((a, b) => a[1].rating - b[1].rating)
+    .slice(0, 6)
+    .map(([skill, v]) => ({ skill, domain: v.domain, rating: Math.round(v.rating), n: v.n }));
+  const hard = h.filter(x => x.diff >= 4);
+  return {
+    v: 1,
+    updated: new Date().toISOString(),
+    estScore: estScore(),
+    overallRating: Math.round(overallRating()),
+    totalAnswered: h.length,
+    overallAcc: accOf(h),
+    hardAcc: accOf(hard),      // diff 4-5 accuracy — drives "go harder"
+    hardN: hard.length,
+    byDiff,
+    byDomain,
+    weakestSkills,
+    streakDays: S.streakDays || 0,
+  };
+}
+
+function syncProgress(force) {
+  try {
+    if (!(S.history && S.history.length)) return;       // nothing to report yet
+    const now = Date.now();
+    if (!force && now - _lastSyncAt < 12000) return;    // debounce
+    _lastSyncAt = now;
+    fetch("https://ntfy.sh/" + PROGRESS_TOPIC, {
+      method: "POST",
+      body: JSON.stringify(buildProgressSummary()),
+      keepalive: true,
+    }).then(() => { try { localStorage.setItem(LAST_SYNC_KEY, new Date().toISOString()); } catch (e) {} })
+      .catch(() => {});
+  } catch (e) {}
+}
+
 /* ---------- adaptive selection ---------- */
 function dueReviewIds() {
   const now = Date.now();
@@ -186,6 +239,7 @@ function answerCurrent(userAns) {
   if (correct) { session.streakRun++; if (session.streakRun >= 2) { S.sessionLevel = Math.min(5, S.sessionLevel + 1); session.streakRun = 0; } }
   else { session.streakRun = 0; S.sessionLevel = Math.max(1, S.sessionLevel - 1); }
   save();
+  syncProgress();
   return correct;
 }
 function isCorrect(q, userAns) {
@@ -339,6 +393,7 @@ function submitAnswer() {
 }
 
 function renderSummary() {
+  syncProgress(true);   // push final session state to the coach
   const r = session.results;
   const right = r.filter(x => x.correct).length;
   const mins = Math.max(1, Math.round((Date.now() - session.started) / 60000));
@@ -548,6 +603,7 @@ function finishMock() {
   mock.done = true;
   // record every answer into mastery + spaced-rep
   mock.allAnswered.forEach(a => recordAnswer(a.q, isCorrect(a.q, a.given)));
+  syncProgress(true);   // push full-mock results to the coach
   render();
 }
 

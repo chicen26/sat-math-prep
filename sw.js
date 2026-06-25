@@ -2,7 +2,7 @@
    Strategy: network-first for same-origin GETs (so code fixes and the daily
    coach's fresh questions always load when online), with a cache fallback so
    the app still opens offline. Bump VERSION to invalidate old caches. */
-const VERSION = "satmath-v4";
+const VERSION = "satmath-v5";
 const ASSETS = [
   "./", "./index.html", "./styles.css", "./app.js", "./data.js",
   "./manifest.json", "./icon-192.png", "./icon-512.png",

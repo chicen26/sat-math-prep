@@ -3,6 +3,20 @@
 Task: append fresh, high-quality, SAT-style math questions to the `QUESTIONS` array in
 `~/sat-math-prep/data.js`. Then verify the file still passes the structural check.
 
+## 0. Read the student's live progress first
+Before generating, fetch the latest on-device progress the app pushed to its private topic:
+```bash
+curl -s "https://ntfy.sh/satmath-progress-99bef57af356c412bc146ee642a84e83/json?poll=1&since=12h" \
+  | node -e 'let s="";process.stdin.on("data",d=>s+=d).on("end",()=>{const line=(s.trim().split("\n").pop()||"");try{console.log(JSON.stringify(JSON.parse(JSON.parse(line).message),null,2))}catch(e){console.log("")}})'
+```
+If it returns a JSON summary, use it to steer THIS run (this is the "react to my score" loop):
+- **`weakestSkills`** → generate extra questions in those skills/domains.
+- **`hardAcc` (accuracy at diff 4–5)** → the higher it is, the more **difficulty 5** to generate
+  (e.g. `hardAcc ≥ 0.8` → go ~70% diff 5 and add two-concept items; `hardAcc ≤ 0.5` → keep more
+  diff 3–4 scaffolding on the weak skills before piling on diff 5).
+- **`byDomain[*].acc`** → bias the domain mix toward the lowest-accuracy domains.
+If the fetch is empty (no recent practice / message expired), fall back to the default mix below.
+
 ## Each run
 1. Add **8–12 new questions**, spread across all four domains:
    `ALG` (Algebra), `ADV` (Advanced Math), `PSD` (Problem-Solving & Data), `GEO` (Geometry & Trig).
